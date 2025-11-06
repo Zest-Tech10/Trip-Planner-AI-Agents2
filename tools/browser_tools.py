@@ -1,7 +1,4 @@
-
-
-# gemini and openai fallback version with logging below
-
+# # tools/browser_tools.py
 # import os
 # import json
 # import requests
@@ -18,7 +15,7 @@
 #     level=logging.INFO,
 #     format="%(asctime)s [%(levelname)s] %(message)s",
 #     handlers=[
-#         logging.FileHandler("browser_tools.log"),
+#         # logging.FileHandler("browser_tools.log"),
 #         logging.StreamHandler()
 #     ]
 # )
@@ -40,51 +37,41 @@
 #     def _run(self, website: str) -> str:
 #         try:
 #             logging.info(f"🌐 Starting scrape for: {website}")
-            
-#             # URL for Browserless API
+
+#             # ✅ Browserless API Key (required)
 #             api_key = os.getenv("BROWSERLESS_API_KEY")
 #             if not api_key:
 #                 logging.error("❌ Missing BROWSERLESS_API_KEY environment variable.")
 #                 return "Error: Missing Browserless API key."
 
+#             # Request website content via Browserless
 #             url = f"https://chrome.browserless.io/content?token={api_key}"
 #             payload = json.dumps({"url": website})
 #             headers = {'cache-control': 'no-cache', 'content-type': 'application/json'}
 
-#             # Make request
 #             response = requests.post(url, headers=headers, data=payload)
-
 #             if response.status_code != 200:
 #                 error_msg = f"Error: Failed to fetch website content. Status code: {response.status_code}"
 #                 logging.error(error_msg)
 #                 return error_msg
 
-#             # Extract content from HTML
+#             # Extract readable content
 #             elements = partition_html(text=response.text)
 #             content = "\n\n".join([str(el) for el in elements])
 #             logging.info(f"✅ Successfully scraped {len(content)} characters from {website}")
 
-#             # Split into chunks for summarization
+#             # Split content into chunks for summarization
 #             content_chunks = [content[i:i + 8000] for i in range(0, len(content), 8000)]
 #             summaries = []
 
-#             # ----------------------------------------------------------------------
-#             # STEP 2: Try Gemini first, fallback to GPT if Gemini fails
-#             # ----------------------------------------------------------------------
-#             llm = None
-#             try:
-#                 logging.info("🔹 Attempting to initialize Gemini model (gemini-2.0-flash)")
-#                 llm = LLM(model="gemini/gemini-2.0-flash")
-#                 # logging.info("✅ Gemini model initialized successfully")
-#             except Exception as e:
-#                 logging.warning(f"⚠️ Gemini initialization failed: {e}")
-#                 logging.info("Switching to GPT-5-mini fallback...")
-#                 llm = LLM(model="gpt-5-mini", api_key=os.getenv("OPENAI_API_KEY"))
-#                 logging.info("✅ Fallback to GPT-5-mini successful")
+#             # ✅ Use only OpenAI (no Gemini fallback)
+#             llm = LLM(
+#                 model="gpt-5-mini",  # You can change to gpt-4o, gpt-4o-mini, etc.
+#                 api_key=os.getenv("OPENAI_API_KEY")
+#             )
+#             logging.info("✅ Using OpenAI LLM (gpt-5-mini) for summarization")
 
-#             # ----------------------------------------------------------------------
-#             # STEP 3: Summarize each chunk
-#             # ----------------------------------------------------------------------
+#             # Summarize each chunk
 #             for i, chunk in enumerate(content_chunks, start=1):
 #                 logging.info(f"🧠 Summarizing chunk {i}/{len(content_chunks)}...")
 
@@ -111,7 +98,7 @@
 #                     logging.error(error_msg)
 #                     summaries.append(error_msg)
 
-#             # Join all summaries together
+#             # Combine summaries
 #             full_summary = "\n\n".join(summaries)
 #             logging.info("🏁 Website summarization complete.")
 #             return full_summary
@@ -125,7 +112,10 @@
 
 
 
+
+
 import os
+import sys
 import json
 import requests
 import logging
@@ -137,13 +127,19 @@ from crewai import Agent, Task, LLM
 # ---------------------------
 # 🔧 LOGGING CONFIGURATION
 # ---------------------------
+# logging.basicConfig(
+#     level=logging.INFO,
+#     format="%(asctime)s [%(levelname)s] %(message)s",
+#     handlers=[
+#         logging.FileHandler("browser_tools.log"),
+#         logging.StreamHandler()
+#     ]
+# )
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[
-        logging.FileHandler("browser_tools.log"),
-        logging.StreamHandler()
-    ]
+    handlers=[logging.StreamHandler(sys.stdout)],
 )
 
 # ---------------------------
