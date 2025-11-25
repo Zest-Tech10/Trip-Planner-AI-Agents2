@@ -180,67 +180,138 @@ logging.basicConfig(
 # ---------------------------
 # 🧠 AGENTS CLASS
 # ---------------------------
-class TripAgents():
-    def __init__(self, llm: BaseChatModel = None):
-        if llm is None:
-            # ✅ Always use OpenAI model
-            try:
-                self.llm = LLM(
-                    model="gpt-5-mini",  # or gpt-4o-mini, gpt-4o, etc.
-                    # api_key=os.getenv("OPENAI_API_KEY")
-                )
-                logging.info("✅ OpenAI LLM (gpt-5-mini) initialized successfully.")
-            except Exception as e:
-                logging.error(f"❌ Failed to initialize OpenAI model: {e}")
-                raise e
-        else:
-            self.llm = llm
-            logging.info("Using provided LLM instance")
+# class TripAgents():
+#     def __init__(self, llm: BaseChatModel = None):
+#         if llm is None:
+#             # ✅ Always use OpenAI model
+#             try:
+#                 self.llm = LLM(
+#                     model="gpt-5-mini",  # or gpt-4o-mini, gpt-4o, etc.
+#                     # api_key=os.getenv("OPENAI_API_KEY")
+#                 )
+#                 logging.info("✅ OpenAI LLM (gpt-5-mini) initialized successfully.")
+#             except Exception as e:
+#                 logging.error(f"❌ Failed to initialize OpenAI model: {e}")
+#                 raise e
+#         else:
+#             self.llm = llm
+#             logging.info("Using provided LLM instance")
 
-        # Initialize tools
+#         # Initialize tools
+#         self.search_tool = SearchTools()
+#         self.browser_tool = BrowserTools()
+#         self.calculator_tool = CalculatorTools()
+#         logging.info("✅ Tools initialized successfully")
+
+#     def city_selection_agent(self):
+#         logging.info("Creating City Selection Expert agent...")
+#         return Agent(
+#             role='City Selection Expert',
+#             goal='Select the best city based on weather, season, and prices',
+#             backstory='An expert in analyzing travel data to pick ideal destinations',
+#             tools=[self.search_tool, self.browser_tool],
+#             allow_delegation=False,
+#             llm=self.llm,
+#             verbose=True
+#         )
+
+#     def local_expert(self):
+#         logging.info("Creating Local Expert agent...")
+#         return Agent(
+#             role='Local Expert at this city',
+#             goal='Provide the BEST insights about the selected city',
+#             backstory="""A knowledgeable local guide with extensive information
+#         about the city, its attractions and customs""",
+#             tools=[self.search_tool, self.browser_tool],
+#             allow_delegation=False,
+#             llm=self.llm,
+#             verbose=True
+#         )
+
+#     def travel_concierge(self):
+#         logging.info("Creating Amazing Travel Concierge agent...")
+#         return Agent(
+#             role='Amazing Travel Concierge',
+#             goal="""Create the most amazing travel itineraries with budget and 
+#         packing suggestions for the city""",
+#             backstory="""Specialist in travel planning and logistics with 
+#         decades of experience""",
+#             tools=[self.search_tool, self.browser_tool, self.calculator_tool],
+#             allow_delegation=False,
+#             llm=self.llm,
+#             verbose=True
+#         )
+
+class TripAgents():
+    def __init__(self):
+        logging.info("🔧 Initializing TripAgents...")
+
+        # -------------------------------
+        # ⚡ Different LLMs for Each Agent
+        # -------------------------------
+
+        # Ultra-fast for simple selection logic
+        self.city_llm = LLM(model="gpt-4.1-mini")
+
+        # Fast for city facts, attractions, food
+        self.local_llm = LLM(model="gpt-4.1-mini")
+
+        # Balanced: high-quality itineraries
+        self.itinerary_llm = LLM(model="gpt-5-mini")  # or gpt-4.1 or gpt-4.1-pro
+
+        logging.info("✅ LLMs initialized (city: gpt-4.1-mini, local: gpt-4.1-mini, concierge: gpt-5-mini)")
+
+        # Tools
         self.search_tool = SearchTools()
         self.browser_tool = BrowserTools()
         self.calculator_tool = CalculatorTools()
-        logging.info("✅ Tools initialized successfully")
+        logging.info("🔧 Tools initialized successfully")
 
+    # ------------------------------------------------------------
+    # 1️⃣ City Selection Agent (uses fastest model)
+    # ------------------------------------------------------------
     def city_selection_agent(self):
         logging.info("Creating City Selection Expert agent...")
         return Agent(
             role='City Selection Expert',
             goal='Select the best city based on weather, season, and prices',
-            backstory='An expert in analyzing travel data to pick ideal destinations',
+            backstory='Expert at analyzing global travel patterns.',
             tools=[self.search_tool, self.browser_tool],
             allow_delegation=False,
-            llm=self.llm,
-            verbose=True
+            llm=self.city_llm,  # 🟢 FASTEST MODEL
+            verbose=False
         )
 
+    # ------------------------------------------------------------
+    # 2️⃣ Local Expert Agent (mid-level model)
+    # ------------------------------------------------------------
     def local_expert(self):
         logging.info("Creating Local Expert agent...")
         return Agent(
             role='Local Expert at this city',
-            goal='Provide the BEST insights about the selected city',
-            backstory="""A knowledgeable local guide with extensive information
-        about the city, its attractions and customs""",
+            goal='Provide accurate insights about the selected city.',
+            backstory='A local expert with deep cultural and historical knowledge.',
             tools=[self.search_tool, self.browser_tool],
             allow_delegation=False,
-            llm=self.llm,
-            verbose=True
+            llm=self.local_llm,  # 🟢 FAST + GOOD MODEL
+            verbose=False
         )
 
+    # ------------------------------------------------------------
+    # 3️⃣ Travel Concierge Agent (most detailed work)
+    # ------------------------------------------------------------
     def travel_concierge(self):
-        logging.info("Creating Amazing Travel Concierge agent...")
+        logging.info("Creating Travel Concierge agent...")
         return Agent(
             role='Amazing Travel Concierge',
-            goal="""Create the most amazing travel itineraries with budget and 
-        packing suggestions for the city""",
-            backstory="""Specialist in travel planning and logistics with 
-        decades of experience""",
+            goal='Create the most amazing itineraries with budget and tips.',
+            backstory='A master in travel planning & logistics.',
             tools=[self.search_tool, self.browser_tool, self.calculator_tool],
             allow_delegation=False,
-            llm=self.llm,
-            verbose=True
+            llm=self.itinerary_llm,  # 🟡 HIGHER QUALITY MODEL
+            verbose=False
         )
+
 
 # ---------------------------
 # 🧾 STREAM (LOG) OUTPUT HANDLER

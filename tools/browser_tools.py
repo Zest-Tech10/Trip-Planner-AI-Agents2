@@ -188,7 +188,8 @@ class BrowserTools(BaseTool):
 
             # ✅ Use only OpenAI (no Gemini fallback)
             llm = LLM(
-                model="gpt-5-mini",  # You can change to gpt-4o, gpt-4o-mini, etc.
+                # model="gpt-5-mini",  # You can change to gpt-4o, gpt-4o-mini, etc.
+                model="gpt-4.1-mini",  # You can change to gpt-4o, gpt-4o-mini, etc.
                 api_key=os.getenv("OPENAI_API_KEY")
             )
             logging.info("✅ Using OpenAI LLM (gpt-5-mini) for summarization")
