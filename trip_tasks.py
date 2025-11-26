@@ -291,7 +291,7 @@ class TripTasks():
             max_output_tokens=900
         )
 
-    🗓️ STEP 3: Design the Itinerary (FAST VERSION)
+    # 🗓️ STEP 3: Design the Itinerary (FAST VERSION)
     def plan_task(self, agent, origin, interests, range):
         return Task(
             description=dedent(f"""
