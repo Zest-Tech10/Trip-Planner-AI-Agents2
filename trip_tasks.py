@@ -292,6 +292,34 @@ class TripTasks():
         )
 
     # 🗓️ STEP 3: Design the Itinerary (FAST VERSION)
+    # def plan_task(self, agent, origin, interests, range):
+    #     return Task(
+    #         description=dedent(f"""
+    #             Role: Travel Itinerary Designer.
+
+    #             Goal:
+    #             Using 'city_guide', create a 3–5 day itinerary for a traveler 
+    #             departing from {origin} during {range}, focused on {interests}.
+
+    #             Include:
+    #             - Daily activities (morning, afternoon, evening)
+    #             - 1–2 restaurants per day
+    #             - Accommodation suggestion
+    #             - Estimated daily cost + full budget breakdown
+    #             - Free & paid activities with approx costs
+    #             - Travel tips + safety notes
+
+    #             Format clearly with titles + bullet points.
+
+    #             {self.__tip_section()}
+    #         """),
+    #         expected_output="A clean, structured 3–5 day itinerary with activities, food, budget and tips.",
+    #         agent=agent,
+    #         depends_on=["chosen_city", "city_guide"],
+    #         output_key="final_itinerary",
+    #         max_output_tokens=1800  # Heavy output but controlled
+    #     )
+
     def plan_task(self, agent, origin, interests, range):
         return Task(
             description=dedent(f"""
@@ -307,15 +335,20 @@ class TripTasks():
                 - Accommodation suggestion
                 - Estimated daily cost + full budget breakdown
                 - Free & paid activities with approx costs
+                - **A comparison table that separates FREE vs PAID activities**  
                 - Travel tips + safety notes
+
+                Table Format Requirement:
+                | Activity | Type (Free/Paid) | Approx Cost | Notes |
+                |----------|------------------|-------------|-------|
 
                 Format clearly with titles + bullet points.
 
                 {self.__tip_section()}
             """),
-            expected_output="A clean, structured 3–5 day itinerary with activities, food, budget and tips.",
+            expected_output="A clean, structured 3–5 day itinerary with activities, food, budget, tips, and a FREE vs PAID table.",
             agent=agent,
             depends_on=["chosen_city", "city_guide"],
             output_key="final_itinerary",
-            max_output_tokens=1800  # Heavy output but controlled
+            max_output_tokens=1800
         )
