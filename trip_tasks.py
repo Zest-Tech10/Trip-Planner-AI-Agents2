@@ -261,8 +261,8 @@ class TripTasks():
             """),
             expected_output="A short travel recommendation with chosen city, attraction summary, and cost estimate.",
             agent=agent,
-            output_key="chosen_city",
-            max_output_tokens=800  # Fast output
+            output_key="chosen_city"
+            
         )
 
     # 🏙️ STEP 2: Create a City Guide (FAST VERSION)
@@ -287,8 +287,8 @@ class TripTasks():
             expected_output="A clear, readable city guide with overview, attractions, food, and seasonal tips.",
             agent=agent,
             depends_on=["chosen_city"],
-            output_key="city_guide",
-            max_output_tokens=900
+            output_key="city_guide"
+            
         )
 
     # 🗓️ STEP 3: Design the Itinerary (FAST VERSION)
@@ -316,9 +316,8 @@ class TripTasks():
             expected_output="A clean, structured 3–5 day itinerary with activities, food, budget and tips.",
             agent=agent,
             depends_on=["chosen_city", "city_guide"],
-            output_key="final_itinerary",
-            max_output_tokens=1800  # Heavy output but controlled
-        )
+            output_key="final_itinerary"
+            
 
     # def plan_task(self, agent, origin, interests, range):
     #     return Task(
