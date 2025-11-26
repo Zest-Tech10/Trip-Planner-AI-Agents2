@@ -317,7 +317,7 @@ class TripTasks():
             agent=agent,
             depends_on=["chosen_city", "city_guide"],
             output_key="final_itinerary"
-            
+        )
 
     # def plan_task(self, agent, origin, interests, range):
     #     return Task(
