@@ -609,7 +609,7 @@ def validate_api_keys(settings: Settings = Depends(get_settings)):
         logger.error(f"❌ Missing API keys: {', '.join(missing)}")
         raise HTTPException(status_code=500, detail=f"Missing required API keys: {', '.join(missing)}")
     return settings
-
+# new redis database url added in .env file
 # ============================================================
 # 🧩 REDIS CACHE HANDLER
 # ============================================================
