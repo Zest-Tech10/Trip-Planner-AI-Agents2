@@ -4,10 +4,17 @@ crewai
 openai>=1.6.1
 unstructured>=0.11.0
 pyowm>=3.3.0
-langchain
-langchain-community
-langchain-core
+# langchain
+# langchain-community
+# langchain-core
 tools>=0.1.9
+
+# pore add kora hoyce below
+# LangChain (PINNED & MINIMAL)
+langchain-core==0.1.35
+langchain-community==0.0.38
+langchain-openai==0.0.8
+langgraph==1.0.0
 
 # Web framework
 fastapi>=0.109.0
@@ -21,6 +28,6 @@ pydantic>=2.10
 python-dotenv>=1.0.0
 nest_asyncio
 
-# Langchain integrations
-langchain-openai>=0.0.5
+# # Langchain integrations
+# langchain-openai>=0.0.5
 
